@@ -13,6 +13,12 @@ paths:
       responses:
         '200':
           description: Account list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountResponse'
     post:
       tags: [Accounts]
       summary: Create account
@@ -25,6 +31,22 @@ paths:
       responses:
         '201':
           description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '400':
+          description: Validation or business rule (RP1-001 / RP1-002 / RP1-003)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Customer not found in customer-service
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/accounts/{id}:
     get:
       tags: [Accounts]
@@ -34,6 +56,16 @@ paths:
       responses:
         '200':
           description: Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '404':
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags: [Accounts]
       summary: Update account
@@ -48,6 +80,22 @@ paths:
       responses:
         '200':
           description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags: [Accounts]
       summary: Delete account
@@ -56,6 +104,12 @@ paths:
       responses:
         '204':
           description: Deleted
+        '404':
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/accounts/{id}/balance:
     get:
       tags: [Accounts]
@@ -65,6 +119,16 @@ paths:
       responses:
         '200':
           description: Balance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+        '404':
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/accounts/{id}/deposits:
     post:
       tags: [Accounts]
@@ -80,6 +144,22 @@ paths:
       responses:
         '200':
           description: Deposit applied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '400':
+          description: Inactive account, monthly limit, fixed-term day rule, or validation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/accounts/{id}/withdrawals:
     post:
       tags: [Accounts]
@@ -95,6 +175,22 @@ paths:
       responses:
         '200':
           description: Withdrawal applied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '400':
+          description: Insufficient funds, inactive account, monthly limit, or fixed-term rule
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/accounts/{accountId}/movements:
     get:
       tags: [Account Movements]
@@ -108,6 +204,12 @@ paths:
       responses:
         '200':
           description: Movement list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountMovementResponse'
   /api/v1/account-movements:
     get:
       tags: [Account Movements]
@@ -115,6 +217,12 @@ paths:
       responses:
         '200':
           description: Movement list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountMovementResponse'
     post:
       tags: [Account Movements]
       summary: Create movement
@@ -127,28 +235,40 @@ paths:
       responses:
         '201':
           description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountMovementResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/account-movements/{id}:
     get:
       tags: [Account Movements]
       summary: Get movement by id
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/MovementId'
       responses:
         '200':
           description: Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountMovementResponse'
+        '404':
+          description: Movement not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags: [Account Movements]
       summary: Update movement
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/MovementId'
       requestBody:
         required: true
         content:
@@ -158,21 +278,45 @@ paths:
       responses:
         '200':
           description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountMovementResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Movement not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags: [Account Movements]
       summary: Delete movement
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/MovementId'
       responses:
         '204':
           description: Deleted
+        '404':
+          description: Movement not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   parameters:
     AccountId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    MovementId:
       name: id
       in: path
       required: true
@@ -208,6 +352,50 @@ components:
             type: string
         status:
           $ref: '#/components/schemas/AccountStatus'
+    AccountResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        customerId:
+          type: string
+        accountType:
+          $ref: '#/components/schemas/AccountType'
+        balance:
+          type: number
+        maintenanceFee:
+          type: number
+        monthlyMovementLimit:
+          type: integer
+        allowedTransactionDay:
+          type: integer
+        holders:
+          type: array
+          items:
+            type: string
+        authorizedSigners:
+          type: array
+          items:
+            type: string
+        status:
+          $ref: '#/components/schemas/AccountStatus'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    BalanceResponse:
+      type: object
+      properties:
+        accountId:
+          type: string
+        customerId:
+          type: string
+        accountType:
+          $ref: '#/components/schemas/AccountType'
+        availableBalance:
+          type: number
     TransactionRequest:
       type: object
       required: [amount]
@@ -226,3 +414,35 @@ components:
           $ref: '#/components/schemas/MovementType'
         amount:
           type: number
+    AccountMovementResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        accountId:
+          type: string
+        customerId:
+          type: string
+        movementType:
+          $ref: '#/components/schemas/MovementType'
+        amount:
+          type: number
+        balanceAfter:
+          type: number
+        occurredAt:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
