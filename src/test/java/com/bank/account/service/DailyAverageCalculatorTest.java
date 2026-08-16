@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DailyAverageCalculatorTest {
@@ -27,5 +28,6 @@ class DailyAverageCalculatorTest {
         BigDecimal average = calculator.monthToDateAverage(
                 new BigDecimal("300"), List.of(deposit), new BigDecimal("-50"), today);
         assertTrue(average.compareTo(BigDecimal.ZERO) > 0);
+        assertEquals(new BigDecimal("183.33"), average);
     }
 }

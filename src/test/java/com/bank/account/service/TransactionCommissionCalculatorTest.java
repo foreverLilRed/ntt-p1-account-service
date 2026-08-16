@@ -24,8 +24,16 @@ class TransactionCommissionCalculatorTest {
     }
 
     @Test
+    void sixthMovementPaysCommission() {
+        assertEquals(new BigDecimal("2.50"), calculator.calculate(5, 5, new BigDecimal("2.50")));
+        assertEquals(BigDecimal.ZERO, calculator.calculate(0, 5, new BigDecimal("2.50")));
+    }
+
+    @Test
     void depositIsBillable() {
         assertTrue(calculator.isBillable(MovementType.DEPOSIT));
+        assertTrue(calculator.isBillable(MovementType.WITHDRAWAL));
+        assertTrue(calculator.isBillable(MovementType.TRANSFER_OUT));
         assertFalse(calculator.isBillable(MovementType.TRANSFER_IN));
         assertFalse(calculator.isBillable(MovementType.COMMISSION));
     }

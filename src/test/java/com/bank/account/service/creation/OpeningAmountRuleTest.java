@@ -37,4 +37,18 @@ class OpeningAmountRuleTest {
         StepVerifier.create(rule.validate(CustomerDto.builder().id("c1").build(), request))
                 .verifyComplete();
     }
+
+    @Test
+    void acceptsDepositEqualToMinimum() {
+        AccountProperties properties = new AccountProperties();
+        properties.getOpening().setMinimumAmount(new BigDecimal("100"));
+        OpeningAmountRule rule = new OpeningAmountRule(properties);
+        AccountRequest request = AccountRequest.builder()
+                .customerId("c1")
+                .accountType(AccountType.SAVINGS)
+                .initialDeposit(new BigDecimal("100"))
+                .build();
+        StepVerifier.create(rule.validate(CustomerDto.builder().id("c1").build(), request))
+                .verifyComplete();
+    }
 }
