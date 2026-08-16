@@ -1,5 +1,6 @@
 package com.bank.account.mapper;
 
+import com.bank.account.config.AccountProperties;
 import com.bank.account.dto.AccountMovementRequest;
 import com.bank.account.dto.AccountMovementResponse;
 import com.bank.account.dto.AccountRequest;
@@ -7,6 +8,7 @@ import com.bank.account.dto.AccountResponse;
 import com.bank.account.dto.BalanceResponse;
 import com.bank.account.model.Account;
 import com.bank.account.model.AccountMovement;
+import com.bank.account.model.AccountProductVariant;
 import com.bank.account.model.AccountStatus;
 
 import java.math.BigDecimal;
@@ -26,27 +28,38 @@ public final class AccountMapper {
     /**
      * Builds a new account entity from a create request and product defaults.
      *
-     * @param request             create payload
-     * @param maintenanceFee      fee applied to checking accounts
-     * @param monthlyMovementLimit monthly limit for savings accounts
+     * @param request        create payload
+     * @param properties     product configuration
+     * @param maintenanceFee fee applied to the product
+     * @param variant        product variant
+     * @param minDailyAvg    VIP daily average, or null
      * @return new account
      */
     public static Account toEntity(AccountRequest request,
+                                   AccountProperties properties,
                                    BigDecimal maintenanceFee,
-                                   Integer monthlyMovementLimit) {
+                                   AccountProductVariant variant,
+                                   BigDecimal minDailyAvg) {
         Instant now = Instant.now();
         List<String> holders = Optional.ofNullable(request.getHolders())
                 .filter(list -> !list.isEmpty())
                 .orElseGet(() -> List.of(request.getCustomerId()));
         List<String> signers = Optional.ofNullable(request.getAuthorizedSigners())
                 .orElseGet(ArrayList::new);
+        BigDecimal deposit = Optional.ofNullable(request.getInitialDeposit()).orElse(BigDecimal.ZERO);
+        Integer monthlyLimit = properties.getSavings().getMonthlyMovementLimit();
 
         return Account.builder()
                 .customerId(request.getCustomerId())
                 .accountType(request.getAccountType())
-                .balance(BigDecimal.ZERO)
+                .productVariant(variant)
+                .balance(deposit)
                 .maintenanceFee(maintenanceFee)
-                .monthlyMovementLimit(monthlyMovementLimit)
+                .monthlyMovementLimit(monthlyLimit)
+                .freeMonthlyTransactions(properties.getTransactions().getFreeMonthly())
+                .transactionCommissionFee(properties.getTransactions().getCommissionFee())
+                .minimumOpeningAmount(properties.getOpening().getMinimumAmount())
+                .minDailyAverageBalance(minDailyAvg)
                 .allowedTransactionDay(request.getAllowedTransactionDay())
                 .holders(new ArrayList<>(holders))
                 .authorizedSigners(new ArrayList<>(signers))
@@ -88,9 +101,14 @@ public final class AccountMapper {
                 .id(account.getId())
                 .customerId(account.getCustomerId())
                 .accountType(account.getAccountType())
+                .productVariant(account.getProductVariant())
                 .balance(account.getBalance())
                 .maintenanceFee(account.getMaintenanceFee())
                 .monthlyMovementLimit(account.getMonthlyMovementLimit())
+                .freeMonthlyTransactions(account.getFreeMonthlyTransactions())
+                .transactionCommissionFee(account.getTransactionCommissionFee())
+                .minimumOpeningAmount(account.getMinimumOpeningAmount())
+                .minDailyAverageBalance(account.getMinDailyAverageBalance())
                 .allowedTransactionDay(account.getAllowedTransactionDay())
                 .holders(account.getHolders())
                 .authorizedSigners(account.getAuthorizedSigners())
@@ -127,6 +145,7 @@ public final class AccountMapper {
                 .customerId(request.getCustomerId())
                 .movementType(request.getMovementType())
                 .amount(request.getAmount())
+                .commissionAmount(BigDecimal.ZERO)
                 .balanceAfter(BigDecimal.ZERO)
                 .occurredAt(Instant.now())
                 .build();
@@ -145,6 +164,8 @@ public final class AccountMapper {
                 .customerId(movement.getCustomerId())
                 .movementType(movement.getMovementType())
                 .amount(movement.getAmount())
+                .commissionAmount(Optional.ofNullable(movement.getCommissionAmount()).orElse(BigDecimal.ZERO))
+                .transferId(movement.getTransferId())
                 .balanceAfter(movement.getBalanceAfter())
                 .occurredAt(movement.getOccurredAt())
                 .build();

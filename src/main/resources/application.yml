@@ -9,12 +9,29 @@ server:
 
 spring.data.mongodb.uri: mongodb://localhost:27017/banking_accounts
 
-services:
-  customer:
-    base-url: http://localhost:8081
-
 account:
   checking:
     maintenance-fee: 10.00
   savings:
     monthly-movement-limit: 5
+  opening:
+    minimum-amount: 0
+  transactions:
+    free-monthly: 5
+    commission-fee: 2.50
+  vip:
+    min-daily-average: 500.00
+  pyme:
+    maintenance-fee: 0
+
+services:
+  customer:
+    base-url: http://localhost:8081
+  credit:
+    base-url: http://localhost:8083
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
+    enabled: ${EUREKA_ENABLED:true}

@@ -2,6 +2,7 @@ package com.bank.account.dto;
 
 import com.bank.account.model.AccountStatus;
 import com.bank.account.model.AccountType;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -28,6 +30,9 @@ public class AccountRequest {
 
     /** Required for FIXED_TERM accounts (day of month 1-31). */
     private Integer allowedTransactionDay;
+
+    @DecimalMin(value = "0.00")
+    private BigDecimal initialDeposit;
 
     private List<String> holders;
 

@@ -16,6 +16,10 @@ public class AccountProperties {
 
     private Checking checking = new Checking();
     private Savings savings = new Savings();
+    private Opening opening = new Opening();
+    private Transactions transactions = new Transactions();
+    private Vip vip = new Vip();
+    private Pyme pyme = new Pyme();
 
     @Data
     public static class Checking {
@@ -25,5 +29,26 @@ public class AccountProperties {
     @Data
     public static class Savings {
         private Integer monthlyMovementLimit = 5;
+    }
+
+    @Data
+    public static class Opening {
+        private BigDecimal minimumAmount = BigDecimal.ZERO;
+    }
+
+    @Data
+    public static class Transactions {
+        private Integer freeMonthly = 5;
+        private BigDecimal commissionFee = new BigDecimal("2.50");
+    }
+
+    @Data
+    public static class Vip {
+        private BigDecimal minDailyAverage = new BigDecimal("500.00");
+    }
+
+    @Data
+    public static class Pyme {
+        private BigDecimal maintenanceFee = BigDecimal.ZERO;
     }
 }

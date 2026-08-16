@@ -16,5 +16,6 @@ public class CustomerDto {
 
     private String id;
     private String customerType;
+    private String customerProfile;
     private String fullName;
 }

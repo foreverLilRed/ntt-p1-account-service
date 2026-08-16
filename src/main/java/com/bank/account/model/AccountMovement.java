@@ -31,6 +31,11 @@ public class AccountMovement {
 
     private BigDecimal amount;
 
+    @Builder.Default
+    private BigDecimal commissionAmount = BigDecimal.ZERO;
+
+    private String transferId;
+
     private BigDecimal balanceAfter;
 
     private Instant occurredAt;

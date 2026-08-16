@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Component
 @RequiredArgsConstructor
-public class CustomerEligibilityValidator {
+public class CustomerEligibilityValidator implements AccountCreationRule {
 
     private static final String PERSONAL = "PERSONAL";
     private static final String BUSINESS = "BUSINESS";
@@ -32,6 +32,7 @@ public class CustomerEligibilityValidator {
      * @param request  create payload
      * @return completion signal, or error when an eligibility rule is violated
      */
+    @Override
     public Mono<Void> validate(CustomerDto customer, AccountRequest request) {
         String type = customer.getCustomerType();
         AccountType accountType = request.getAccountType();
@@ -73,7 +74,7 @@ public class CustomerEligibilityValidator {
                                 "Personal customer already has a " + accountType + " account",
                                 HttpStatus.CONFLICT));
                     }
-                    return Mono.<Void>empty();
+                    return Mono.empty();
                 });
     }
 

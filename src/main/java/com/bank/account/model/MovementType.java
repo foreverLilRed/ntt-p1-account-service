@@ -5,5 +5,8 @@ package com.bank.account.model;
  */
 public enum MovementType {
     DEPOSIT,
-    WITHDRAWAL
+    WITHDRAWAL,
+    TRANSFER_OUT,
+    TRANSFER_IN,
+    COMMISSION
 }

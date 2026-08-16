@@ -23,6 +23,8 @@ public class AccountMovementResponse {
     private String customerId;
     private MovementType movementType;
     private BigDecimal amount;
+    private BigDecimal commissionAmount;
+    private String transferId;
     private BigDecimal balanceAfter;
     private Instant occurredAt;
 }

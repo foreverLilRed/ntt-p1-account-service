@@ -1,5 +1,6 @@
 package com.bank.account.dto;
 
+import com.bank.account.model.AccountProductVariant;
 import com.bank.account.model.AccountStatus;
 import com.bank.account.model.AccountType;
 import lombok.AllArgsConstructor;
@@ -23,9 +24,14 @@ public class AccountResponse {
     private String id;
     private String customerId;
     private AccountType accountType;
+    private AccountProductVariant productVariant;
     private BigDecimal balance;
     private BigDecimal maintenanceFee;
     private Integer monthlyMovementLimit;
+    private Integer freeMonthlyTransactions;
+    private BigDecimal transactionCommissionFee;
+    private BigDecimal minimumOpeningAmount;
+    private BigDecimal minDailyAverageBalance;
     private Integer allowedTransactionDay;
     private List<String> holders;
     private List<String> authorizedSigners;

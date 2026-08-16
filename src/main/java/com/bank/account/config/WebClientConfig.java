@@ -22,4 +22,17 @@ public class WebClientConfig {
                 .baseUrl(properties.getBaseUrl())
                 .build();
     }
+
+    /**
+     * Builds a WebClient pointed at credit-service.
+     *
+     * @param properties credit service properties
+     * @return configured WebClient
+     */
+    @Bean
+    public WebClient creditWebClient(CreditServiceProperties properties) {
+        return WebClient.builder()
+                .baseUrl(properties.getBaseUrl())
+                .build();
+    }
 }

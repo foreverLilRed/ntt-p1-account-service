@@ -19,6 +19,17 @@ public interface AccountCreationStrategy {
     AccountType supportedType();
 
     /**
+     * Whether this strategy applies to the requested type and customer profile.
+     *
+     * @param type    account type
+     * @param profile customer profile
+     * @return true when this strategy should be used
+     */
+    default boolean supports(AccountType type, String profile) {
+        return supportedType() == type;
+    }
+
+    /**
      * Validates product-specific creation rules for the requested account.
      *
      * @param request create payload

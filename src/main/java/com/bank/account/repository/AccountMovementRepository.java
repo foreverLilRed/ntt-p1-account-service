@@ -24,6 +24,26 @@ public interface AccountMovementRepository extends ReactiveMongoRepository<Accou
     Flux<AccountMovement> findByAccountIdOrderByOccurredAtDesc(String accountId);
 
     /**
+     * Lists movements of an account within a time window.
+     *
+     * @param accountId account identifier
+     * @param from      inclusive start
+     * @param to        exclusive end
+     * @return movement stream
+     */
+    Flux<AccountMovement> findByAccountIdAndOccurredAtGreaterThanEqualAndOccurredAtLessThan(
+            String accountId, Instant from, Instant to);
+
+    /**
+     * Lists all movements within a time window.
+     *
+     * @param from inclusive start
+     * @param to   exclusive end
+     * @return movement stream
+     */
+    Flux<AccountMovement> findByOccurredAtGreaterThanEqualAndOccurredAtLessThan(Instant from, Instant to);
+
+    /**
      * Counts movements of an account within a time window.
      *
      * @param accountId account identifier

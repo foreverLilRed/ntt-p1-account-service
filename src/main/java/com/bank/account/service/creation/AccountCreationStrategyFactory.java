@@ -5,18 +5,16 @@ import com.bank.account.model.AccountType;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.util.EnumMap;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Resolves the {@link AccountCreationStrategy} that matches a given
- * {@link AccountType}, indexing all Spring-managed strategies by type.
+ * Resolves the {@link AccountCreationStrategy} matching type and customer profile.
  */
 @Component
 public class AccountCreationStrategyFactory {
 
-    private final Map<AccountType, AccountCreationStrategy> strategiesByType;
+    private final List<AccountCreationStrategy> strategies;
 
     /**
      * Builds the factory registry from all available strategies.
@@ -24,24 +22,30 @@ public class AccountCreationStrategyFactory {
      * @param strategies strategies discovered by Spring
      */
     public AccountCreationStrategyFactory(List<AccountCreationStrategy> strategies) {
-        this.strategiesByType = new EnumMap<>(AccountType.class);
-        for (AccountCreationStrategy strategy : strategies) {
-            this.strategiesByType.put(strategy.supportedType(), strategy);
-        }
+        this.strategies = strategies;
     }
 
     /**
-     * Resolves the strategy for the requested account type.
+     * Resolves the most specific strategy for the requested account.
      *
-     * @param type requested account type
+     * @param type    requested account type
+     * @param profile customer profile
      * @return matching strategy
-     * @throws BusinessException when no strategy supports the type
      */
-    public AccountCreationStrategy resolve(AccountType type) {
-        AccountCreationStrategy strategy = strategiesByType.get(type);
-        if (strategy == null) {
-            throw new BusinessException("Unsupported account type: " + type, HttpStatus.BAD_REQUEST);
+    public AccountCreationStrategy resolve(AccountType type, String profile) {
+        return strategies.stream()
+                .sorted(Comparator.comparingInt(this::specificity).reversed())
+                .filter(strategy -> strategy.supports(type, profile))
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(
+                        "Unsupported account type: " + type, HttpStatus.BAD_REQUEST));
+    }
+
+    private int specificity(AccountCreationStrategy strategy) {
+        if (strategy instanceof VipSavingsAccountCreationStrategy
+                || strategy instanceof PymeCheckingAccountCreationStrategy) {
+            return 2;
         }
-        return strategy;
+        return 1;
     }
 }
