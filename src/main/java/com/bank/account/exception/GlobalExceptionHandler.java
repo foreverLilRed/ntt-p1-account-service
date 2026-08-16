@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.ServerWebInputException;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
@@ -44,6 +45,23 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining("; "));
         log.warn("Validation failed: {}", message);
+        return build(HttpStatus.BAD_REQUEST, message, exchange);
+    }
+
+    /**
+     * Handles missing or unreadable request bodies.
+     *
+     * @param ex       input exception
+     * @param exchange current exchange
+     * @return error response entity
+     */
+    @ExceptionHandler(ServerWebInputException.class)
+    public ResponseEntity<ErrorResponse> handleWebInput(ServerWebInputException ex, ServerWebExchange exchange) {
+        String message = ex.getReason() != null ? ex.getReason() : "Invalid request body";
+        if (ex.getCause() != null && ex.getCause().getMessage() != null) {
+            message = ex.getCause().getMessage();
+        }
+        log.warn("Invalid request input: {}", message);
         return build(HttpStatus.BAD_REQUEST, message, exchange);
     }
 
