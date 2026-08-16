@@ -228,7 +228,7 @@ public class AccountService {
                     "about to call derived count (FIXED_TERM)",
                     "{\"from\":\"" + from + "\",\"to\":\"" + to + "\"}");
             // #endregion
-            return movementRepository.countByAccountIdAndOccurredAtGreaterThanEqualAndOccurredAtLessThan(
+            return movementRepository.countByAccountIdInRange(
                             account.getId(), from, to)
                     .flatMap(count -> {
                         if (count >= 1) {
@@ -251,7 +251,7 @@ public class AccountService {
                     "about to call derived count (SAVINGS)",
                     "{\"from\":\"" + from + "\",\"to\":\"" + to + "\"}");
             // #endregion
-            return movementRepository.countByAccountIdAndOccurredAtGreaterThanEqualAndOccurredAtLessThan(
+            return movementRepository.countByAccountIdInRange(
                             account.getId(), from, to)
                     .flatMap(count -> {
                         if (count >= account.getMonthlyMovementLimit()) {
