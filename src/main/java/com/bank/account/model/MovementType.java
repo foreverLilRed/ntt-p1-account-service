@@ -8,5 +8,6 @@ public enum MovementType {
     WITHDRAWAL,
     TRANSFER_OUT,
     TRANSFER_IN,
-    COMMISSION
+    COMMISSION,
+    DEBIT_PAYMENT
 }

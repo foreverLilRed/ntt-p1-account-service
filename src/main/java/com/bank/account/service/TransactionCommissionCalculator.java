@@ -14,7 +14,7 @@ import java.util.Set;
 public class TransactionCommissionCalculator {
 
     private static final Set<MovementType> BILLABLE = EnumSet.of(
-            MovementType.DEPOSIT, MovementType.WITHDRAWAL, MovementType.TRANSFER_OUT);
+            MovementType.DEPOSIT, MovementType.WITHDRAWAL, MovementType.TRANSFER_OUT, MovementType.DEBIT_PAYMENT);
 
     /**
      * Returns the fee for the next billable movement.

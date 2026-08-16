@@ -35,3 +35,10 @@ eureka:
     service-url:
       defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
     enabled: ${EUREKA_ENABLED:true}
+
+spring:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP:localhost:9092}
+    consumer:
+      group-id: account-service
+      auto-offset-reset: earliest

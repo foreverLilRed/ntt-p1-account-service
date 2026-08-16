@@ -2,11 +2,13 @@ package com.bank.account;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.kafka.annotation.EnableKafka;
 
 /**
  * Entry point of the account microservice.
  */
 @SpringBootApplication
+@EnableKafka
 public class AccountServiceApplication {
 
     /**
