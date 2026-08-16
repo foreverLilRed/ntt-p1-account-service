@@ -41,7 +41,7 @@ class AccountLedgerTest {
     @Test
     void rejectsInsufficientFunds() {
         Account account = baseAccount().balance(new BigDecimal("10")).build();
-        when(movementRepository.findByAccountIdAndOccurredAtGreaterThanEqualAndOccurredAtLessThan(
+        when(movementRepository.findByAccountIdInRange(
                 any(), any(), any())).thenReturn(Flux.empty());
         StepVerifier.create(ledger.apply(account, new BigDecimal("20"), MovementType.WITHDRAWAL, null))
                 .expectError(BusinessException.class)
@@ -55,7 +55,7 @@ class AccountLedgerTest {
                 .freeMonthlyTransactions(0)
                 .transactionCommissionFee(new BigDecimal("2.50"))
                 .build();
-        when(movementRepository.findByAccountIdAndOccurredAtGreaterThanEqualAndOccurredAtLessThan(
+        when(movementRepository.findByAccountIdInRange(
                 any(), any(), any())).thenReturn(Flux.empty());
         when(movementRepository.save(any(AccountMovement.class)))
                 .thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
