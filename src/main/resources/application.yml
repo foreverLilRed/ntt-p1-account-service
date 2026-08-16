@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: account-service
+  config:
+    import: optional:configserver:http://localhost:8888
+
+server:
+  port: 8082
+
+spring.data.mongodb.uri: mongodb://localhost:27017/banking_accounts
+
+services:
+  customer:
+    base-url: http://localhost:8081
+
+account:
+  checking:
+    maintenance-fee: 10.00
+  savings:
+    monthly-movement-limit: 5

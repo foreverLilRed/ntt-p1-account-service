@@ -1,0 +1,228 @@
+openapi: 3.0.3
+info:
+  title: Account Service API
+  description: Passive products - savings, checking and fixed-term accounts
+  version: 1.0.0
+servers:
+  - url: http://localhost:8082
+paths:
+  /api/v1/accounts:
+    get:
+      tags: [Accounts]
+      summary: List accounts
+      responses:
+        '200':
+          description: Account list
+    post:
+      tags: [Accounts]
+      summary: Create account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRequest'
+      responses:
+        '201':
+          description: Created
+  /api/v1/accounts/{id}:
+    get:
+      tags: [Accounts]
+      summary: Get account by id
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: Found
+    put:
+      tags: [Accounts]
+      summary: Update account
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRequest'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      tags: [Accounts]
+      summary: Delete account
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      responses:
+        '204':
+          description: Deleted
+  /api/v1/accounts/{id}/balance:
+    get:
+      tags: [Accounts]
+      summary: Get available balance
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: Balance
+  /api/v1/accounts/{id}/deposits:
+    post:
+      tags: [Accounts]
+      summary: Deposit
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionRequest'
+      responses:
+        '200':
+          description: Deposit applied
+  /api/v1/accounts/{id}/withdrawals:
+    post:
+      tags: [Accounts]
+      summary: Withdrawal
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionRequest'
+      responses:
+        '200':
+          description: Withdrawal applied
+  /api/v1/accounts/{accountId}/movements:
+    get:
+      tags: [Account Movements]
+      summary: List movements of an account
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Movement list
+  /api/v1/account-movements:
+    get:
+      tags: [Account Movements]
+      summary: List all movements
+      responses:
+        '200':
+          description: Movement list
+    post:
+      tags: [Account Movements]
+      summary: Create movement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountMovementRequest'
+      responses:
+        '201':
+          description: Created
+  /api/v1/account-movements/{id}:
+    get:
+      tags: [Account Movements]
+      summary: Get movement by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Found
+    put:
+      tags: [Account Movements]
+      summary: Update movement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountMovementRequest'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      tags: [Account Movements]
+      summary: Delete movement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted
+components:
+  parameters:
+    AccountId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    AccountType:
+      type: string
+      enum: [SAVINGS, CHECKING, FIXED_TERM]
+    AccountStatus:
+      type: string
+      enum: [ACTIVE, INACTIVE, CLOSED]
+    MovementType:
+      type: string
+      enum: [DEPOSIT, WITHDRAWAL]
+    AccountRequest:
+      type: object
+      required: [customerId, accountType]
+      properties:
+        customerId:
+          type: string
+        accountType:
+          $ref: '#/components/schemas/AccountType'
+        allowedTransactionDay:
+          type: integer
+        holders:
+          type: array
+          items:
+            type: string
+        authorizedSigners:
+          type: array
+          items:
+            type: string
+        status:
+          $ref: '#/components/schemas/AccountStatus'
+    TransactionRequest:
+      type: object
+      required: [amount]
+      properties:
+        amount:
+          type: number
+    AccountMovementRequest:
+      type: object
+      required: [accountId, customerId, movementType, amount]
+      properties:
+        accountId:
+          type: string
+        customerId:
+          type: string
+        movementType:
+          $ref: '#/components/schemas/MovementType'
+        amount:
+          type: number
