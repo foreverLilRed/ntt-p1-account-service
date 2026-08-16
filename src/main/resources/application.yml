@@ -3,11 +3,20 @@ spring:
     name: account-service
   config:
     import: optional:configserver:http://localhost:8888
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/banking_accounts
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: 6379
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP:localhost:9092}
+    consumer:
+      group-id: account-service
+      auto-offset-reset: earliest
 
 server:
   port: 8082
-
-spring.data.mongodb.uri: mongodb://localhost:27017/banking_accounts
 
 account:
   checking:
@@ -35,10 +44,3 @@ eureka:
     service-url:
       defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
     enabled: ${EUREKA_ENABLED:true}
-
-spring:
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP:localhost:9092}
-    consumer:
-      group-id: account-service
-      auto-offset-reset: earliest
