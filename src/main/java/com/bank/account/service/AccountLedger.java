@@ -51,8 +51,7 @@ public class AccountLedger {
         InstantRange month = currentMonth();
         return validateFixedTerm(account, month)
                 .then(movementRepository
-                        .findByAccountIdAndOccurredAtGreaterThanEqualAndOccurredAtLessThan(
-                                account.getId(), month.from(), month.to())
+                        .findByAccountIdInRange(account.getId(), month.from(), month.to())
                         .collectList())
                 .flatMap(movements -> post(account, amount, type, transferId, movements));
     }
@@ -114,7 +113,7 @@ public class AccountLedger {
                             + account.getAllowedTransactionDay() + " of the month",
                     HttpStatus.BAD_REQUEST));
         }
-        return movementRepository.countByAccountIdAndOccurredAtGreaterThanEqualAndOccurredAtLessThan(
+        return movementRepository.countByAccountIdInRange(
                         account.getId(), month.from(), month.to())
                 .flatMap(count -> {
                     if (count >= 1) {

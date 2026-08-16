@@ -182,7 +182,7 @@ public class AccountService {
     public Observable<ProductMetricDto> productReport(Instant from, Instant to) {
         return RxJava3Adapter.fluxToObservable(
                 Mono.zip(accountRepository.findAll().collectList(),
-                                movementRepository.findByOccurredAtGreaterThanEqualAndOccurredAtLessThan(from, to)
+                                movementRepository.findInRange(from, to)
                                         .collectList())
                         .flatMapMany(tuple -> {
                             List<Account> accounts = tuple.getT1();
